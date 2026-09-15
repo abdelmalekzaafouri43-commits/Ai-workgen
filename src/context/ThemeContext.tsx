@@ -165,6 +165,14 @@ export const THEMES: Record<ThemeId, ThemeConfig> = {
   },
 };
 
+function hexToRgba(hex: string, alpha: number) {
+  let c = hex.replace('#', '');
+  if (c.length === 3) c = c.split('').map((x) => x + x).join('');
+  const num = parseInt(c, 16);
+  if (isNaN(num)) return `rgba(2, 132, 199, ${alpha})`;
+  return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
+}
+
 interface ThemeContextValue {
   themeId: ThemeId;
   theme: ThemeConfig;
@@ -174,11 +182,15 @@ interface ThemeContextValue {
   toggleDarkMode: () => void;
   setMode: (mode: 'dark' | 'light') => void;
   availableThemes: ThemeConfig[];
+  customAccentColor: string | null;
+  setCustomAccentColor: (color: string | null) => void;
+  resetAccentColor: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 const THEME_STORAGE_KEY = 'lexilens_active_theme';
+const ACCENT_STORAGE_KEY = 'lexilens_custom_accent_primary';
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [themeId, setThemeId] = useState<ThemeId>(() => {
@@ -193,7 +205,53 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return 'dark-blue';
   });
 
-  const theme = THEMES[themeId] || THEMES['dark-blue'];
+  const [customAccentColor, setCustomAccentColorState] = useState<string | null>(() => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const saved = localStorage.getItem(ACCENT_STORAGE_KEY);
+        if (saved && /^#[0-9A-Fa-f]{6}$/.test(saved)) return saved;
+      }
+    } catch (e) {
+      console.warn('localStorage read disabled/blocked:', e);
+    }
+    return null;
+  });
+
+  const setCustomAccentColor = (color: string | null) => {
+    setCustomAccentColorState(color);
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        if (color) {
+          localStorage.setItem(ACCENT_STORAGE_KEY, color);
+        } else {
+          localStorage.removeItem(ACCENT_STORAGE_KEY);
+        }
+      }
+    } catch (e) {
+      console.warn('localStorage write disabled/blocked:', e);
+    }
+  };
+
+  const resetAccentColor = () => {
+    setCustomAccentColor(null);
+  };
+
+  const baseTheme = THEMES[themeId] || THEMES['dark-blue'];
+
+  const theme: ThemeConfig = customAccentColor
+    ? {
+        ...baseTheme,
+        accentPrimary: customAccentColor,
+        accentHover: customAccentColor,
+        accentGlow: `0 0 25px ${hexToRgba(customAccentColor, 0.45)}`,
+        accentGradient: `linear-gradient(135deg, ${customAccentColor} 0%, ${hexToRgba(customAccentColor, 0.8)} 100%)`,
+        borderFocus: hexToRgba(customAccentColor, 0.6),
+        textAccent: customAccentColor,
+        highlightMint: customAccentColor,
+        swatchDot: customAccentColor,
+      }
+    : baseTheme;
+
   const isDark = theme.isDark ?? true;
   const mode = isDark ? 'dark' : 'light';
 
@@ -236,6 +294,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     root.style.setProperty('--accent-primary', theme.accentPrimary);
     root.style.setProperty('--accent-hover', theme.accentHover);
     root.style.setProperty('--accent-glow', theme.accentGlow);
+    root.style.setProperty('--accent-gradient', theme.accentGradient);
     root.style.setProperty('--highlight-mint', theme.highlightMint);
     root.style.setProperty('--text-primary', theme.textPrimary);
     root.style.setProperty('--text-muted', theme.textMuted);
@@ -269,6 +328,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         toggleDarkMode,
         setMode,
         availableThemes: Object.values(THEMES),
+        customAccentColor,
+        setCustomAccentColor,
+        resetAccentColor,
       }}
     >
       {children}

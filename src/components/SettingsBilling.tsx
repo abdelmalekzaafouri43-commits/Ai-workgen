@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { ThemeSelector } from './ThemeSelector';
 import { LightDarkModeToggle } from './LightDarkModeToggle';
+import { AccentColorPicker } from './AccentColorPicker';
 
 export const SettingsBilling: React.FC = () => {
   const { theme } = useTheme();
@@ -264,7 +265,9 @@ export const SettingsBilling: React.FC = () => {
             </div>
           </div>
 
-          {/* Theme Palette Quick Configuration */}
+          {/* Theme Palette Quick Configuration & Custom Accent Color Picker */}
+          <AccentColorPicker />
+
           <div
             className="rounded-2xl border p-5 bg-black/40 shadow-lg space-y-4"
             style={{ borderColor: theme.borderSubtle }}

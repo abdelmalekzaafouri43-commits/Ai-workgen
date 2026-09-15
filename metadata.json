@@ -1,6 +1,6 @@
 {
   "name": "LexiLens - English AI Tutor & Worksheet Studio",
   "description": "Premium English learning platform and worksheet customization studio featuring an AI Tutor Lens, layout scanner, and dynamic theme engine.",
-  "requestFramePermissions": [],
+  "requestFramePermissions": ["microphone"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

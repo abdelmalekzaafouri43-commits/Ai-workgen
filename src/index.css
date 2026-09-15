@@ -89,6 +89,27 @@
     break-inside: avoid !important;
     page-break-inside: avoid !important;
   }
+  
+  /* Print Preview Modal - Print Overrides */
+  .print-preview-modal {
+    position: static !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    display: block !important;
+  }
+  .print-preview-toolbar {
+    display: none !important;
+  }
+  .print-preview-scroll-area {
+    display: block !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+  .print-preview-paper {
+    max-width: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
 }
 
 /* Laser scan animation for Visual Structure Scanner */
