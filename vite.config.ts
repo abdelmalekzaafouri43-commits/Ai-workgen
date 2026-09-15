@@ -6,7 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig(() => {
   return {
-    base: process.env.BASE_URL || '/',
+    base: '', // Empty string forces completely relative paths which is safest for GitHub Pages
     plugins: [
       react(),
       tailwindcss(),

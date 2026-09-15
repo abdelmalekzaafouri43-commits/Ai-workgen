@@ -2,6 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Clear out any old Service Workers that might be caching the white screen
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+          }
+        });
+      }
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>LexiLens - English AI Tutor & Worksheet Studio</title>
     <meta name="description" content="Premium English learning platform and worksheet customization studio featuring an AI Tutor Lens, layout scanner, and dynamic theme engine." />
