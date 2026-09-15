@@ -182,9 +182,13 @@ const THEME_STORAGE_KEY = 'lexilens_active_theme';
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [themeId, setThemeId] = useState<ThemeId>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(THEME_STORAGE_KEY) as ThemeId;
-      if (saved && THEMES[saved]) return saved;
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const saved = localStorage.getItem(THEME_STORAGE_KEY) as ThemeId;
+        if (saved && THEMES[saved]) return saved;
+      }
+    } catch (e) {
+      console.warn('localStorage read disabled/blocked:', e);
     }
     return 'dark-blue';
   });
@@ -214,7 +218,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   useEffect(() => {
-    localStorage.setItem(THEME_STORAGE_KEY, themeId);
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem(THEME_STORAGE_KEY, themeId);
+      }
+    } catch (e) {
+      console.warn('localStorage write disabled/blocked:', e);
+    }
 
     const root = document.documentElement;
     root.style.setProperty('--bg-base', theme.bgBase);

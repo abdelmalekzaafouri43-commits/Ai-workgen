@@ -35,6 +35,51 @@ export async function exportElementToPdf(
       logging: false,
       backgroundColor: '#ffffff',
       windowWidth: element.scrollWidth,
+      onclone: (clonedDoc) => {
+        // 1. Sanitize <style> blocks in the cloned document to remove unsupported modern CSS syntax like oklch()
+        const styleEls = clonedDoc.querySelectorAll('style');
+        styleEls.forEach((style) => {
+          if (style.textContent && (style.textContent.includes('oklch') || style.textContent.includes('color-mix'))) {
+            style.textContent = style.textContent
+              .replace(/oklch\([^)]+\)/gi, '#0284c7')
+              .replace(/color-mix\([^)]+\)/gi, '#0f172a');
+          }
+        });
+
+        // 2. Clean inline styles containing oklch
+        const elementsWithInlineStyle = clonedDoc.querySelectorAll('[style*="oklch"]');
+        elementsWithInlineStyle.forEach((el) => {
+          const styleAttr = el.getAttribute('style') || '';
+          el.setAttribute('style', styleAttr.replace(/oklch\([^)]+\)/gi, '#0284c7'));
+        });
+
+        // 3. Map computed RGB styles from original live DOM onto cloned elements for accurate rendering
+        const origNodes = [element, ...Array.from(element.querySelectorAll('*'))] as HTMLElement[];
+        const clonedRoot = clonedDoc.getElementById(elementId);
+        if (clonedRoot) {
+          const clonedNodes = [clonedRoot, ...Array.from(clonedRoot.querySelectorAll('*'))] as HTMLElement[];
+          for (let i = 0; i < origNodes.length && i < clonedNodes.length; i++) {
+            const orig = origNodes[i];
+            const cloned = clonedNodes[i];
+            if (orig && cloned) {
+              try {
+                const cs = window.getComputedStyle(orig);
+                if (cs.color && !cs.color.includes('oklch')) {
+                  cloned.style.color = cs.color;
+                }
+                if (cs.backgroundColor && cs.backgroundColor !== 'rgba(0, 0, 0, 0)' && !cs.backgroundColor.includes('oklch')) {
+                  cloned.style.backgroundColor = cs.backgroundColor;
+                }
+                if (cs.borderColor && !cs.borderColor.includes('oklch')) {
+                  cloned.style.borderColor = cs.borderColor;
+                }
+              } catch (_) {
+                // Ignore individual style read errors
+              }
+            }
+          }
+        }
+      },
     });
 
     // Restore hidden elements
