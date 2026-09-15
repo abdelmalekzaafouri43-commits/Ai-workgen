@@ -1,0 +1,429 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-base: #000000;
+    --bg-sidebar: #030712;
+    --bg-card: #080d1a;
+    --bg-card-hover: #0f172a;
+    --border-subtle: rgba(56, 189, 248, 0.15);
+    --border-focus: rgba(56, 189, 248, 0.6);
+    --accent-primary: #0284c7;
+    --accent-hover: #38bdf8;
+    --accent-glow: 0 0 25px rgba(56, 189, 248, 0.35);
+    --highlight-mint: #38bdf8;
+    --text-primary: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-accent: #38bdf8;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.45);
+}
+
+/* Print Styles for Printable Worksheet Export (A4 Standard) */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+  body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .printable-worksheet {
+    position: relative;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .printable-worksheet * {
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+    background: transparent !important;
+  }
+  .printable-worksheet input, .printable-worksheet textarea {
+    border-bottom: 1px solid #94a3b8 !important;
+    background: transparent !important;
+  }
+  /* Page break rules to prevent splitting question blocks mid-page */
+  .printable-worksheet h1,
+  .printable-worksheet h2,
+  .printable-worksheet h3 {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+  .printable-worksheet .space-y-3 > div,
+  .printable-worksheet .space-y-4 > div,
+  .printable-worksheet .grid > div {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}
+
+/* Laser scan animation for Visual Structure Scanner */
+@keyframes laserSweep {
+  0% {
+    top: 0%;
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0.8;
+  }
+}
+
+.animate-laser {
+  animation: laserSweep 2.2s ease-in-out infinite alternate;
+}
+
+/* Light Mode Comprehensive Contrast & Styling Engine */
+body.light-mode {
+  color: #0f172a;
+}
+
+/* Light mode form input controls */
+body.light-mode input,
+body.light-mode select,
+body.light-mode textarea {
+  background-color: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+body.light-mode input:focus,
+body.light-mode select:focus,
+body.light-mode textarea:focus {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+body.light-mode input::placeholder,
+body.light-mode textarea::placeholder {
+  color: #64748b;
+}
+
+/* ==========================================================================
+   ANIMATED BORDER SYSTEM & RETICLES
+   ========================================================================== */
+
+@property --border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes rotateBorderAngle {
+  0% {
+    --border-angle: 0deg;
+  }
+  100% {
+    --border-angle: 360deg;
+  }
+}
+
+/* 1. Animated Rotating Border Beam & Vibrant AI Generator Card System */
+.ai-generator-animated-card {
+  position: relative;
+  border-radius: 1rem;
+  box-shadow: 0 0 20px -3px rgba(56, 189, 248, 0.25), 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ai-generator-animated-card::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: calc(1rem + 2px);
+  padding: 2px;
+  background: conic-gradient(
+    from var(--border-angle),
+    #38bdf8 0%,
+    #0284c7 25%,
+    #10b981 50%,
+    #06b6d4 75%,
+    #38bdf8 100%
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: rotateBorderAngle 3.5s linear infinite;
+  z-index: 10;
+  opacity: 0.9;
+}
+
+.ai-generator-animated-card:hover::before,
+.ai-generator-animated-card.is-generating::before {
+  animation-duration: 1.5s;
+  opacity: 1;
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.8));
+}
+
+.ai-generator-animated-card.is-generating {
+  box-shadow: 0 0 35px 2px rgba(56, 189, 248, 0.45), 0 12px 40px -5px rgba(0, 0, 0, 0.5);
+}
+
+.border-beam-active {
+  position: relative;
+}
+
+.border-beam-active::before {
+  content: '';
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--border-angle),
+    transparent 0%,
+    transparent 50%,
+    var(--accent-hover, #38bdf8) 75%,
+    var(--highlight-mint, #38bdf8) 92%,
+    transparent 100%
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: rotateBorderAngle 3s linear infinite;
+  z-index: 10;
+}
+
+/* 2. Ambient Pulsing Border Glow */
+@keyframes borderGlowPulse {
+  0%, 100% {
+    border-color: var(--border-subtle, rgba(56, 189, 248, 0.2));
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    border-color: var(--border-focus, rgba(56, 189, 248, 0.7));
+    box-shadow: 0 0 16px -2px var(--highlight-mint, rgba(56, 189, 248, 0.35));
+  }
+}
+
+.animate-border-pulse {
+  animation: borderGlowPulse 2.4s ease-in-out infinite;
+}
+
+/* Fast pulse for active generation state */
+@keyframes borderGeneratingPulse {
+  0%, 100% {
+    border-color: var(--border-focus, rgba(56, 189, 248, 0.5));
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+  }
+  50% {
+    border-color: var(--highlight-mint, #38bdf8);
+    box-shadow: 0 0 24px 2px rgba(56, 189, 248, 0.45);
+  }
+}
+
+.animate-border-generating {
+  animation: borderGeneratingPulse 1.4s ease-in-out infinite;
+}
+
+/* 3. Smooth Flowing Gradient Border */
+@keyframes gradientBorderFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-gradient-border {
+  position: relative;
+}
+
+.animated-gradient-border::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(56, 189, 248, 0.15),
+    var(--highlight-mint, #38bdf8),
+    var(--accent-primary, #0284c7),
+    rgba(56, 189, 248, 0.15)
+  );
+  background-size: 300% 300%;
+  animation: gradientBorderFlow 6s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 4. Animated Marching Dash Border for Dropzones */
+@keyframes marchingDashes {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.animate-dash-flow {
+  background-image: repeating-linear-gradient(
+    0deg,
+    var(--border-subtle, rgba(56, 189, 248, 0.3)),
+    var(--border-subtle, rgba(56, 189, 248, 0.3)) 8px,
+    transparent 8px,
+    transparent 16px
+  ),
+  repeating-linear-gradient(
+    90deg,
+    var(--border-subtle, rgba(56, 189, 248, 0.3)),
+    var(--border-subtle, rgba(56, 189, 248, 0.3)) 8px,
+    transparent 8px,
+    transparent 16px
+  ),
+  repeating-linear-gradient(
+    180deg,
+    var(--border-subtle, rgba(56, 189, 248, 0.3)),
+    var(--border-subtle, rgba(56, 189, 248, 0.3)) 8px,
+    transparent 8px,
+    transparent 16px
+  ),
+  repeating-linear-gradient(
+    270deg,
+    var(--border-subtle, rgba(56, 189, 248, 0.3)),
+    var(--border-subtle, rgba(56, 189, 248, 0.3)) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  background-size: 1.5px 100%, 100% 1.5px, 1.5px 100%, 100% 1.5px;
+  background-position: 0 0, 0 0, 100% 0, 0 100%;
+  background-repeat: no-repeat;
+  animation: dashShift 14s linear infinite;
+}
+
+@keyframes dashShift {
+  0% {
+    background-position: 0 0, 0 0, 100% 0, 0 100%;
+  }
+  100% {
+    background-position: 0 -100px, 100px 0, 100% 100px, -100px 100%;
+  }
+}
+
+/* 5. Optical Scanner Corner Reticles */
+.reticle-corner-tl {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid var(--highlight-mint, #38bdf8);
+  border-left: 2px solid var(--highlight-mint, #38bdf8);
+  border-top-left-radius: 8px;
+  transition: all 0.25s ease;
+}
+
+.reticle-corner-tr {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid var(--highlight-mint, #38bdf8);
+  border-right: 2px solid var(--highlight-mint, #38bdf8);
+  border-top-right-radius: 8px;
+  transition: all 0.25s ease;
+}
+
+.reticle-corner-bl {
+  position: absolute;
+  bottom: -1px;
+  left: -1px;
+  width: 14px;
+  height: 14px;
+  border-bottom: 2px solid var(--highlight-mint, #38bdf8);
+  border-left: 2px solid var(--highlight-mint, #38bdf8);
+  border-bottom-left-radius: 8px;
+  transition: all 0.25s ease;
+}
+
+.reticle-corner-br {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 14px;
+  height: 14px;
+  border-bottom: 2px solid var(--highlight-mint, #38bdf8);
+  border-right: 2px solid var(--highlight-mint, #38bdf8);
+  border-bottom-right-radius: 8px;
+  transition: all 0.25s ease;
+}
+
+@keyframes reticlePulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.animate-reticle-pulse {
+  animation: reticlePulse 1.8s ease-in-out infinite;
+}
+
+/* 6. Subtle Interactive Card Border Hover */
+.interactive-border-card {
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.interactive-border-card:hover {
+  border-color: var(--border-focus, rgba(56, 189, 248, 0.5));
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.35), 0 0 12px -2px var(--highlight-mint, rgba(56, 189, 248, 0.25));
+}
+
+
+
+
